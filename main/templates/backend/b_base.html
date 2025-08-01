@@ -85,6 +85,13 @@
                 transition: all 0.3s ease;
             }
 
+            @media (max-width: 768px) {
+                .sidebar {
+                    top: var(--header-height);
+                    z-index: 1035;
+                }
+            }
+
             .sidebar.collapsed {
                 transform: translateX(-100%);
             }
@@ -330,6 +337,7 @@
             @media (max-width: 768px) {
                 .sidebar {
                     transform: translateX(-100%);
+                    transition: transform 0.3s ease;
                 }
                 
                 .sidebar.show {
@@ -339,6 +347,25 @@
                 .main-content {
                     margin-left: 0;
                     padding: 1rem;
+                }
+                
+                /* Overlay for mobile sidebar */
+                .sidebar-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 1030;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                }
+                
+                .sidebar-overlay.show {
+                    opacity: 1;
+                    visibility: visible;
                 }
             }
 
@@ -370,6 +397,9 @@
     <body>
         <!-- Header -->
         {% include 'backend/b_navbar.html' %}
+
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <!-- Sidebar -->
         {% include 'backend/b_sidebar.html' %}
@@ -407,10 +437,40 @@
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                mainContent.classList.toggle('expanded');
+            function toggleSidebar() {
+                if (window.innerWidth <= 768) {
+                    // Mobile behavior
+                    sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('show');
+                } else {
+                    // Desktop behavior
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                }
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                }
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.contains(e.target) && 
+                        !sidebarToggle.contains(e.target) && 
+                        sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                }
             });
 
             // Initialize DataTables
@@ -444,10 +504,15 @@
             // Responsive sidebar
             function handleResize() {
                 if (window.innerWidth <= 768) {
-                    sidebar.classList.add('collapsed');
+                    // Mobile: hide sidebar by default
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
                     mainContent.classList.add('expanded');
                 } else {
+                    // Desktop: show sidebar by default
                     sidebar.classList.remove('collapsed');
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
                     mainContent.classList.remove('expanded');
                 }
             }
