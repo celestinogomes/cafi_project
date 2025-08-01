@@ -1,0 +1,57 @@
+<aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Menu Principal</div>
+        
+        <div class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name in 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name in 'add-deliberasaun deliberasaun edit-deliberasaun detail-deliberasaun' %}active{% endif %}" href="{% url 'deliberasaun' %}">
+                <i class="fas fa-users"></i>
+                <span>Deliberasaun CAFI</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name in 'add-ata ata edit-ata detail-ata' %}active{% endif %}" href="{% url 'ata' %}">
+                <i class="fas fa-users"></i>
+                <span>Ata Reuniaun</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name in 'karta-tama add-karta-tama detail-karta-tama edit-karta-tama' %}active{% endif %}" href="{% url 'karta-tama' %}">
+                <i class="fas fa-inbox"></i>
+                <span>Convite CAFI</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name in 'karta-sai add-karta-sai detail-karta-sai edit-karta-sai' %}active{% endif %}" href="{% url 'karta-sai' %}">
+                <i class="fas fa-paper-plane"></i>
+                <span>Agenda CAFI</span>
+            </a>
+        </div>
+        {% if user.groups.all.0.name == 'admin' %}
+        <div class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name in 'user-list add-user user-detail' %}active{% endif %}" href="{% url 'user-list' %}">
+                <i class="fas fa-users"></i>
+                <span>Utilizadores</span>
+            </a>
+        </div>
+        {% endif %}
+    </nav>
+    
+    <div class="user-profile mt-auto">
+        <div class="user-avatar">
+            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+        </div>
+        <div>
+            <div class="fw-medium small">{{ user.first_name }} {{ user.last_name }}</div>
+            <small class="text-muted" style="font-size: 0.75rem;">{{ user.groups.first|default:"Administrator" }}</small>
+        </div>
+    </div>
+</aside>

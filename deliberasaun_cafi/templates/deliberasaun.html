@@ -1,0 +1,272 @@
+{% extends 'backend/b_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard' %}" class="text-muted text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-users me-1"></i>Deliberasaun CAFI
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="row mb-3">
+        <div class="col-8">
+            <div class="card h-100">
+                <div class="card-body p-3 d-flex flex-column justify-content-center">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-primary mb-1">
+                                <i class="fas fa-users text-primary me-2"></i>
+                                Deliberasaun CAFI
+                            </h5>
+                            <p class="text-muted mb-0 small">Jestaun no administrasaun deliberasaun CAFI</p>
+                        </div>
+                        {% if user.groups.all.0.name == 'admin' %}
+                        <div class="col-md-6 text-end">
+                            <a href="{% url 'add-deliberasaun' %}" class="btn btn-primary px-3">
+                                <i class="fas fa-plus me-1"></i>
+                                Aumenta Deliberasaun
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            {% if obj %}
+                <div class="row h-100 g-2">
+                    <div class="col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <i class="fas fa-chart-line fa-lg text-primary mb-2"></i>
+                                <h6 class="card-title small mb-1">Total Deliberasaun</h6>
+                                <h4 class="text-primary fw-bold mb-0">{{ obj.count }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <i class="fas fa-calendar-check fa-lg text-success mb-2"></i>
+                                <h6 class="card-title small mb-1">Fulan Ida Ne'e</h6>
+                                <h4 class="text-success fw-bold mb-0">{{ del_month }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    
+    <!-- Messages -->
+    {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} border-0 shadow-sm" role="alert">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="text-muted small">{{ message }}</div>
+                        </div>
+                        <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close" style="font-size: 0.75rem;"></button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Data Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header py-2">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-database text-primary me-2"></i>
+                                Dadus Deliberasaun CAFI
+                            </h6>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <span class="badge bg-primary px-2 py-1">
+                                <i class="fas fa-list me-1"></i>
+                                Total: {{ obj.count }} deliberasaun
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-3">
+                    {% if obj %}
+                        <div class="table-responsive">
+                            <table id="datatablesSimple" class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th style="width: 15%;">
+                                            No. CAFI
+                                        </th>
+                                        <th style="width: 40%;">
+                                            <i class="fas fa-file-alt me-1"></i>Asunto
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-calendar me-1"></i>Data
+                                        </th>
+                                        <th class="text-center" style="width: 25%;">
+                                            <i class="fas fa-cogs me-1"></i>Aksaun
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for data in obj %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                <a href="{% url 'detail-deliberasaun' data.no_cafi %}" 
+                                                   class="fw-bold text-primary text-decoration-none small">
+                                                    {{ data.no_cafi }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div class="fw-medium small">{{ data.asunto|truncatechars:60 }}</div>
+                                                <small class="text-muted" style="font-size: 0.75rem;">
+                                                    {{ data.linha_ministerio }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark border px-2 py-1 small">
+                                                    {{ data.data_cafi|date:"d/m/Y" }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'detail-deliberasaun' data.no_cafi %}" 
+                                                       class="btn btn-outline-info btn-sm" 
+                                                       data-bs-toggle="tooltip" title="Haree Detail">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    {% if user.groups.all.0.name == 'admin' %}
+                                                    <a href="{% url 'edit-deliberasaun' data.no_cafi %}" 
+                                                       class="btn btn-outline-success btn-sm" 
+                                                       data-bs-toggle="tooltip" title="Altera">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="#" 
+                                                       class="btn btn-outline-danger btn-sm delete-btn" 
+                                                       title="Hamoos"
+                                                       data-delete-url="{% url 'delete-deliberasaun' data.no_cafi %}"
+                                                       data-item-name="{{ data.no_cafi }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <div class="mb-3">
+                                <i class="fas fa-inbox fa-3x text-muted"></i>
+                            </div>
+                            <h6 class="text-muted">Laiha deliberasaun ne'ebe rejista</h6>
+                            <p class="text-muted mb-3 small">Komeça husi kria deliberasaun dahuluk</p>
+                            <a href="{% url 'add-deliberasaun' %}" class="btn btn-primary px-3">
+                                <i class="fas fa-plus me-1"></i>
+                                Aumenta Deliberasaun Dahuluk
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Konfirmasaun Hamoos
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="text-center mb-3">
+                    <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-trash fa-lg text-danger"></i>
+                    </div>
+                </div>
+                <p class="text-center mb-3">
+                    Ita boot hakarak hamoos deliberasaun <strong id="itemToDelete"></strong>?
+                </p>
+                <div class="alert alert-warning border-0 bg-warning bg-opacity-10 alert-persistent">
+                    <i class="fas fa-info-circle me-2 text-warning"></i>
+                    <small>Aksaun ida ne'e la bele fila fali. Dadus hotu sei lakon permanente.</small>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Kansela
+                </button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>
+                    Hamoos Agora
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips for non-modal buttons
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]:not(.delete-btn)'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Initialize tooltips for delete buttons separately
+    var deleteTooltips = [].slice.call(document.querySelectorAll('.delete-btn'));
+    deleteTooltips.forEach(function(element) {
+        new bootstrap.Tooltip(element);
+    });
+
+    // Handle delete modal
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const itemToDelete = document.getElementById('itemToDelete');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    // Add click event listeners to all delete buttons
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const deleteUrl = this.getAttribute('data-delete-url');
+            const itemName = this.getAttribute('data-item-name');
+            
+            itemToDelete.textContent = itemName;
+            confirmDeleteBtn.href = deleteUrl;
+            
+            deleteModal.show();
+        });
+    });
+});
+</script>
+{% endblock %}

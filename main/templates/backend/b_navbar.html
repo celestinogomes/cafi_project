@@ -1,0 +1,82 @@
+{% load static %}
+<header class="main-header">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg h-100 py-0">
+            <button class="sidebar-toggle me-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+                <img src="{% static 'images/cafi.jpg' %}" 
+                     alt="CAFI Logo" 
+                     class="navbar-logo me-2">
+                <span class="navbar-text">CAFI</span>
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                        <div class="user-avatar me-2">
+                            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                        </div>
+                        <span class="text-dark fw-medium d-none d-sm-inline small">{{ user.first_name }} {{ user.last_name }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item small" href="{% url 'profile' %}"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item small" href="{% url 'settings' %}"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item small" href="{% url 'user-logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<style>
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    max-width: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.navbar-text {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1f2937 !important;
+    margin: 0;
+}
+
+.navbar-brand {
+    text-decoration: none;
+}
+
+.navbar-brand:hover .navbar-text {
+    color: #3b82f6 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-logo {
+        height: 35px;
+        max-width: 35px;
+    }
+    
+    .navbar-text {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-logo {
+        height: 30px;
+        max-width: 30px;
+    }
+    
+    .navbar-text {
+        font-size: 0.9rem;
+    }
+}
+</style>

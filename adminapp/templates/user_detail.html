@@ -1,0 +1,281 @@
+{% extends 'backend/b_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'user-list' %}" class="text-decoration-none">Lista User</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ user_detail.username }}</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- User Profile Card -->
+            <div class="card">
+                <div class="card-header py-2">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user text-primary me-2"></i>
+                        Detallu User
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- User Avatar and Basic Info -->
+                    <div class="text-center mb-4">
+                        <div class="user-avatar mx-auto mb-3" style="width: 100px; height: 100px; font-size: 2rem;">
+                            {{ user_detail.first_name|first|upper }}{{ user_detail.last_name|first|upper }}
+                        </div>
+                        <h4 class="mb-1">{{ user_detail.first_name }} {{ user_detail.last_name }}</h4>
+                        <p class="text-muted mb-2">@{{ user_detail.username }}</p>
+                        
+                        <!-- Status Badges -->
+                        <div class="mb-3">
+                            {% if user_detail.is_active %}
+                                <span class="badge bg-success me-1">Ativu</span>
+                            {% else %}
+                                <span class="badge bg-danger me-1">La Ativu</span>
+                            {% endif %}
+                            
+                            {% if user_detail.is_staff %}
+                                <span class="badge bg-info me-1">Staff</span>
+                            {% endif %}
+                            
+                            {% if user_detail.is_superuser %}
+                                <span class="badge bg-warning me-1">Superuser</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- User Information Grid -->
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6 mb-4">
+                            <h6 class="fw-bold text-secondary mb-3">
+                                <i class="fas fa-user me-1"></i>Informasaun Pessoal
+                            </h6>
+                            <div class="border rounded p-3">
+                                <div class="row mb-2">
+                                    <div class="col-5 text-muted small">Naran Dahuluk:</div>
+                                    <div class="col-7 fw-medium small">{{ user_detail.first_name|default:"—" }}</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 text-muted small">Naran Ikus:</div>
+                                    <div class="col-7 fw-medium small">{{ user_detail.last_name|default:"—" }}</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 text-muted small">Username:</div>
+                                    <div class="col-7 fw-medium small">{{ user_detail.username }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 text-muted small">Email:</div>
+                                    <div class="col-7 fw-medium small">{{ user_detail.email|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Information -->
+                        <div class="col-md-6 mb-4">
+                            <h6 class="fw-bold text-secondary mb-3">
+                                <i class="fas fa-cog me-1"></i>Informasaun Konta
+                            </h6>
+                            <div class="border rounded p-3">
+                                <div class="row mb-2">
+                                    <div class="col-5 text-muted small">Data Join:</div>
+                                    <div class="col-7 fw-medium small">{{ user_detail.date_joined|date:"d/m/Y H:i" }}</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 text-muted small">Login Ikus:</div>
+                                    <div class="col-7 fw-medium small">{{ user_detail.last_login|date:"d/m/Y H:i"|default:"Nunka login" }}</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5 text-muted small">Status Ativu:</div>
+                                    <div class="col-7">
+                                        {% if user_detail.is_active %}
+                                            <span class="badge bg-success small">Ativu</span>
+                                        {% else %}
+                                            <span class="badge bg-danger small">La Ativu</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 text-muted small">User ID:</div>
+                                    <div class="col-7 fw-medium small">#{{ user_detail.id }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 text-muted small">Password Status:</div>
+                                    <div class="col-7">
+                                        {% if is_default_password %}
+                                            <span class="badge bg-warning small">Default</span>
+                                            <small class="text-muted ms-2">password_123</small>
+                                        {% else %}
+                                            <span class="badge bg-success small">Modifikadu</span>
+                                            <small class="text-muted ms-2">User troka ona password</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groups and Permissions -->
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <h6 class="fw-bold text-secondary mb-3">
+                                <i class="fas fa-shield-alt me-1"></i>Grupu no Permisaun
+                            </h6>
+                            <div class="border rounded p-3">
+                                <div class="row mb-3">
+                                    <div class="col-sm-3 text-muted small">Grupu User:</div>
+                                    <div class="col-sm-9">
+                                        {% for group in user_detail.groups.all %}
+                                            <span class="badge bg-secondary me-1">{{ group.name }}</span>
+                                        {% empty %}
+                                            <span class="text-muted small">Laiha grupu</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-3 text-muted small">Admin Status:</div>
+                                    <div class="col-sm-9">
+                                        {% if user_detail.is_staff %}
+                                            <span class="badge bg-info small">
+                                                <i class="fas fa-check me-1"></i>Admin User
+                                            </span>
+                                            <small class="text-muted ms-2">Bele asesu admin area</small>
+                                        {% else %}
+                                            <span class="badge bg-secondary small">
+                                                <i class="fas fa-times me-1"></i>Staff User
+                                            </span>
+                                            <small class="text-muted ms-2">La bele asesu admin area</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 text-muted small">Superuser:</div>
+                                    <div class="col-sm-9">
+                                        {% if user_detail.is_superuser %}
+                                            <span class="badge bg-warning small">
+                                                <i class="fas fa-crown me-1"></i>Superuser
+                                            </span>
+                                            <small class="text-muted ms-2">Iha permisaun total</small>
+                                        {% else %}
+                                            <span class="badge bg-secondary small">
+                                                <i class="fas fa-user me-1"></i>Regular User
+                                            </span>
+                                            <small class="text-muted ms-2">Permisaun limitadu</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <hr class="my-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'user-list' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i>Fila ba Lista
+                                </a>
+                                <div>
+                                    {% if user_detail.id != user.id %}
+                                    {% if not is_default_password %}
+                                    <a href="{% url 'reset-password' user_detail.id %}" 
+                                       class="btn btn-outline-info me-2"
+                                       onclick="return confirm('Ita-boot hakarak reset password ba user {{ user_detail.username }}? Password sei sai password_123.')">
+                                        <i class="fas fa-key me-1"></i>Reset Password
+                                    </a>
+                                    {% endif %}
+                                    <button class="btn btn-outline-danger" onclick="alert('Funsionalidade hamos user sei implementa')">
+                                        <i class="fas fa-trash me-1"></i>Hamos User
+                                    </button>
+                                    {% else %}
+                                    <a href="{% url 'profile' %}" class="btn btn-primary">
+                                        <i class="fas fa-edit me-1"></i>Hadia Ita-boot Nia Profile
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="card mt-3">
+                <div class="card-header py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-history text-secondary me-2"></i>
+                        Atividade Resenteluk
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title small mb-1">Join Sistema</h6>
+                                <p class="timeline-description text-muted small mb-0">
+                                    User join iha sistema CAFI
+                                </p>
+                                <small class="text-muted">{{ user_detail.date_joined|date:"d M Y, H:i" }}</small>
+                            </div>
+                        </div>
+                        
+                        {% if user_detail.last_login %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title small mb-1">Login Ikus</h6>
+                                <p class="timeline-description text-muted small mb-0">
+                                    Login ba sistema
+                                </p>
+                                <small class="text-muted">{{ user_detail.last_login|date:"d M Y, H:i" }}</small>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -23px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid white;
+}
+
+.timeline-content {
+    padding-left: 15px;
+}
+</style>
+{% endblock %} 

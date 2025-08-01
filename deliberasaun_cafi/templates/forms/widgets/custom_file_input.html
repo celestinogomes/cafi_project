@@ -1,0 +1,7 @@
+{% if widget.value %}
+    <input type="text" id="{{ widget.attrs.id }}_text" class="form-control" readonly="readonly" value="{{ widget.value }}">
+{% else %}
+    <input type="text" id="{{ widget.attrs.id }}_text" class="form-control" placeholder="{{ widget.placeholder|default:_('Choose a file') }}">
+{% endif %}
+<label for="{{ widget.attrs.id }}" class="custom-file-input-label">{{ widget.label }}</label>
+<input type="file" name="{{ widget.name }}" class="form-control" id="{{ widget.attrs.id }}"{% if widget.is_required %} required{% endif %}{% if widget.disabled %} disabled{% endif %}{% if widget.readonly %} readonly{% endif %} {% for attrname, attrvalue in widget.attrs.items() %}{% if attrname != 'type' %}{{ attrname }}="{{ attrvalue }}" {% endif %}{% endfor %}/>

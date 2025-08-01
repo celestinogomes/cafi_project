@@ -1,0 +1,309 @@
+{% extends 'backend/b_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-home me-2"></i>Dashboard
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Welcome Section -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold text-primary mb-2">
+                                Bemvindu, {{ user.first_name }} {{ user.last_name }}!
+                            </h4>
+                            <p class="text-muted mb-2 small">
+                                Ita-boot login ona iha Sistema Conselho de Administração Fundos Infraestrutura nu'udar 
+                                <span class="badge bg-primary px-2 py-1 small">{{ user.groups.first|default:"Administrator" }}</span>
+                            </p>
+                            <div class="alert alert-info mb-0 py-2">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <small>Ba ita-boot nia privasidade no seguransa, keta haluha atu 
+                                <a href="{% url 'user-logout' %}" class="alert-link fw-bold">logout</a> 
+                                antes de ita-boot husik ita-boot nia dispozitivu.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="user-avatar mx-auto mb-2" style="width: 60px; height: 60px; font-size: 1.25rem;">
+                                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                            </div>
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-clock me-1"></i>
+                                Last login: {{ user.last_login|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="text-start">
+                            <h6 class="text-muted mb-1 small">Total Deliberasaun</h6>
+                            <h4 class="mb-0 text-primary fw-bold">{{ total_deliberasaun }}</h4>
+                        </div>
+                        <div class="text-primary">
+                            <i class="fas fa-users fa-lg"></i>
+                        </div>
+                    </div>
+                    <small class="{% if deliberasaun_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        <i class="fas fa-arrow-{% if deliberasaun_change >= 0 %}up{% else %}down{% endif %} me-1"></i>
+                        {{ deliberasaun_change|floatformat:1 }}% from last month ({{ deliberasaun_this_month }} this month)
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="text-start">
+                            <h6 class="text-muted mb-1 small">Karta Tama</h6>
+                            <h4 class="mb-0 text-success fw-bold">{{ total_karta_tama }}</h4>
+                        </div>
+                        <div class="text-success">
+                            <i class="fas fa-inbox fa-lg"></i>
+                        </div>
+                    </div>
+                    <small class="{% if karta_tama_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        <i class="fas fa-arrow-{% if karta_tama_change >= 0 %}up{% else %}down{% endif %} me-1"></i>
+                        {{ karta_tama_change|floatformat:1 }}% from last month ({{ karta_tama_this_month }} this month)
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="text-start">
+                            <h6 class="text-muted mb-1 small">Karta Sai</h6>
+                            <h4 class="mb-0 text-info fw-bold">{{ total_karta_sai }}</h4>
+                        </div>
+                        <div class="text-info">
+                            <i class="fas fa-paper-plane fa-lg"></i>
+                        </div>
+                    </div>
+                    <small class="{% if karta_sai_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        <i class="fas fa-arrow-{% if karta_sai_change >= 0 %}up{% else %}down{% endif %} me-1"></i>
+                        {{ karta_sai_change|floatformat:1 }}% from last month ({{ karta_sai_this_month }} this month)
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="text-start">
+                            <h6 class="text-muted mb-1 small">Total Files</h6>
+                            <h4 class="mb-0 text-warning fw-bold">{{ total_files }}</h4>
+                        </div>
+                        <div class="text-warning">
+                            <i class="fas fa-file-alt fa-lg"></i>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-paperclip me-1"></i>Dokumentu ho file attachment
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    {% if user.groups.all.0.name == 'admin' %}
+    <div class="row g-3 mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-bolt text-warning me-2"></i>
+                        Aksaun Lalais
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row g-2">
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'add-deliberasaun' %}" class="btn btn-outline-primary w-100 py-2">
+                                <i class="fas fa-plus-circle mb-1 d-block"></i>
+                                <small>Aumenta Deliberasaun</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'add-karta-tama' %}" class="btn btn-outline-success w-100 py-2">
+                                <i class="fas fa-inbox mb-1 d-block"></i>
+                                <small>Aumenta Karta Tama</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'add-karta-sai' %}" class="btn btn-outline-info w-100 py-2">
+                                <i class="fas fa-paper-plane mb-1 d-block"></i>
+                                <small>Aumenta Karta Sai</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{% url 'user-list' %}" class="btn btn-outline-secondary w-100 py-2">
+                                <i class="fas fa-users mb-1 d-block"></i>
+                                <small>Jestaun User</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Activity & System Info -->
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-clock text-primary me-2"></i>
+                        Atividade Foun
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="list-group list-group-flush">
+                        {% for deliberasaun in recent_deliberasaun %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge bg-primary rounded-circle p-1 me-2" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-users fa-xs"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small fw-medium">Deliberasaun CAFI Foun</h6>
+                                    <p class="text-muted mb-1" style="font-size: 0.8rem;">{{ deliberasaun.no_cafi }} - {{ deliberasaun.asunto|truncatechars:50 }}</p>
+                                    <small class="text-muted" style="font-size: 0.75rem;">{{ deliberasaun.data_cafi|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p class="mb-0 small">Laiha deliberasaun foun</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% for karta_tama in recent_karta_tama %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge bg-success rounded-circle p-1 me-2" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-inbox fa-xs"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small fw-medium">Karta Tama Foun</h6>
+                                    <p class="text-muted mb-1" style="font-size: 0.8rem;">{{ karta_tama.no_karta }} - {{ karta_tama.asunto|truncatechars:50 }}</p>
+                                    <small class="text-muted" style="font-size: 0.75rem;">{{ karta_tama.data_tama|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        {% if not recent_deliberasaun %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p class="mb-0 small">Laiha karta tama foun</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        
+                        {% for karta_sai in recent_karta_sai %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge bg-info rounded-circle p-1 me-2" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-paper-plane fa-xs"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small fw-medium">Karta Sai Foun</h6>
+                                    <p class="text-muted mb-1" style="font-size: 0.8rem;">{{ karta_sai.no_karta }} - {{ karta_sai.asunto|truncatechars:50 }}</p>
+                                    <small class="text-muted" style="font-size: 0.75rem;">{{ karta_sai.data_sai|timesince }} ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        {% if not recent_deliberasaun and not recent_karta_tama %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p class="mb-0 small">Laiha karta sai foun</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        Informasaun Sistema
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Deliberasaun</span>
+                            <span class="fw-medium small">{{ total_deliberasaun }}</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-primary" style="width: {% if total_deliberasaun > 0 %}{{ total_deliberasaun|add:total_karta_tama|add:total_karta_sai|floatformat:0 }}{% else %}0{% endif %}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Karta Total</span>
+                            <span class="fw-medium small">{{ total_karta_tama|add:total_karta_sai }}</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: {% widthratio total_karta_tama total_karta_tama|add:total_karta_sai|add:total_deliberasaun 100 %}%"></div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-2">
+                    
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Sistema Status:</span>
+                        <span class="badge bg-success small">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Last Update:</span>
+                        <span class="fw-medium small">{% now "d/m/Y" %}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Version:</span>
+                        <span class="fw-medium small">CAFI v1.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

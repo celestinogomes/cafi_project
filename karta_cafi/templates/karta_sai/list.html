@@ -1,0 +1,142 @@
+{% extends 'backend/b_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard' %}" class="text-decoration-none">Home</a>
+            </li>
+            <li class="breadcrumb-item active">Karta Sai</li>
+        </ol>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">Karta Sai CAFI</h4>
+            <p class="text-muted mb-0">Jestaun karta sai (outgoing letters)</p>
+        </div>
+        {% if user.groups.all.0.name == 'admin' %}
+        <div>
+            <a href="{% url 'add-karta-sai' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Aumenta Karta Sai
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="datatablesSimple">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No. Karta</th>
+                            <th>Asunto</th>
+                            <th width="150">Aksaun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in obj %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'detail-karta-sai' data.no_karta %}" class="text-decoration-none fw-medium">
+                                    {{ data.no_karta }}
+                                </a>
+                            </td>
+                            <td>{{ data.asunto }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    {% if user.groups.all.0.name == 'admin' %}
+                                    <a href="{% url 'edit-karta-sai' data.no_karta %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteModal"
+                                            data-karta-no="{{ data.no_karta }}"
+                                            data-karta-asunto="{{ data.asunto }}"
+                                            data-delete-url="{% url 'delete-karta-sai' data.no_karta %}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Konfirma
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Ita boot nia hakarak atu hamoos karta sai ne'e?</p>
+                <div class="alert alert-warning">
+                    <strong>No. Karta:</strong> <span id="modalKartaNo"></span><br>
+                    <strong>Asunto:</strong> <span id="modalKartaAsunto"></span>
+                </div>
+                <p class="text-muted small mb-0">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Aksaun ne'e la bele fila fali. Dokumentu no dadus hotu sei hamoos ba naroman.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Kansela
+                </button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>Hamoos Karta Sai
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle delete modal
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const kartaNo = button.getAttribute('data-karta-no');
+            const kartaAsunto = button.getAttribute('data-karta-asunto');
+            const deleteUrl = button.getAttribute('data-delete-url');
+            
+            // Update modal content
+            document.getElementById('modalKartaNo').textContent = kartaNo;
+            document.getElementById('modalKartaAsunto').textContent = kartaAsunto;
+            
+            // Update delete link
+            document.getElementById('confirmDeleteBtn').setAttribute('href', deleteUrl);
+        });
+    }
+});
+</script>
+
+{% endblock %}

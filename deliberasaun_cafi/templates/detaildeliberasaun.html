@@ -1,0 +1,105 @@
+{% extends 'backend/b_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard' %}" class="text-decoration-none">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'deliberasaun' %}" class="text-decoration-none">Deliberasaun CAFI</a>
+            </li>
+            <li class="breadcrumb-item active">Detail Deliberasaun</li>
+        </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">Detail Deliberasaun</h4>
+            <p class="text-muted mb-0">{{ obj.no_cafi }}</p>
+        </div>
+        <div>
+            <a href="{% url 'deliberasaun' %}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Fila ba lista
+            </a>
+            {% if user.groups.all.0.name == 'admin' %}
+            <a href="{% url 'edit-deliberasaun' obj.no_cafi %}" class="btn btn-primary">
+                <i class="fas fa-edit me-1"></i>Edit
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td width="200" class="text-muted">Numeru CAFI</td>
+                            <td>{{ obj.no_cafi }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Data CAFI</td>
+                            <td>{{ obj.data_cafi|date:"d/m/Y" }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Linha Ministerio</td>
+                            <td>{{ obj.linha_ministerio }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Asunto</td>
+                            <td>{{ obj.asunto }}</td>
+                        </tr>
+                        {% if obj.observasaun %}
+                        <tr>
+                            <td class="text-muted">Observasaun</td>
+                            <td>{{ obj.observasaun }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if obj.file_attachment %}
+                        <tr>
+                            <td class="text-muted">Dokumentu</td>
+                            <td>
+                                <a href="{{ obj.file_attachment.url }}" target="_blank" class="text-decoration-none">
+                                    <i class="fas fa-file-pdf me-1"></i>{{ obj.file_attachment.name }}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% if obj.anexo %}
+                        <tr>
+                            <td class="text-muted">Anexo</td>
+                            <td>
+                                <a href="{{ obj.anexo.url }}" target="_blank" class="text-decoration-none">
+                                    <i class="fas fa-file-pdf me-1"></i>{{ obj.anexo.name }}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-light p-3 rounded">
+                        <h6 class="mb-3">Aksaun</h6>
+                        <div class="d-grid gap-2">
+                            {% if user.groups.all.0.name == 'admin' %}
+                            <a href="{% url 'edit-deliberasaun' obj.no_cafi %}" class="btn btn-outline-primary btn-sm">
+                                Edit Deliberasaun
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'deliberasaun' %}" class="btn btn-outline-secondary btn-sm">
+                                Lista Deliberasaun
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
