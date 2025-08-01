@@ -7,8 +7,7 @@ class CustomFileInput(forms.ClearableFileInput):
     template_name = 'forms/widgets/custom_file_input.html'
 
 class KartaTamaForm(forms.ModelForm):
-    data_karta = forms.DateField(label='Data Karta', widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
-    data_tama = forms.DateField(label='Data Karta Tama', widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
+    data_convite = forms.DateField(label='Data Convite', widget=forms.DateInput(attrs={'class':'form-control','type':'date'}))
     class Meta:
         model = ConviteCafi
         fields = '__all__'
