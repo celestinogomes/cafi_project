@@ -16,6 +16,7 @@ def deliberasaun(request):
 
     obj = Deliberasaun.objects.all()
     objs = natsorted(obj, key=lambda x: x.no_cafi)
+    del_count = obj.count()
     current_month = datetime.now().month
     del_month = obj.filter(data_cafi__month=current_month).count()
 
@@ -23,6 +24,7 @@ def deliberasaun(request):
         'title' : 'Deliberasaun CAFI',
         'obj' : objs,
         'del_month' : del_month,
+        'obj_count' : del_count,
     }
     return render(request, 'deliberasaun.html', context)
 
