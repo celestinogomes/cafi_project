@@ -6,6 +6,7 @@ from deliberasaun_cafi.forms import *
 from django.utils import timezone
 from datetime import datetime
 from cafi_project.decorators import allowed_users
+from natsort import natsorted
 
 @login_required
 @allowed_users(allowed_roles=['admin','staff'])
@@ -14,12 +15,13 @@ def deliberasaun(request):
     year = request.GET.get('year')
 
     obj = Deliberasaun.objects.all()
+    objs = natsorted(obj, key=lambda x: x.no_cafi)
     current_month = datetime.now().month
     del_month = obj.filter(data_cafi__month=current_month).count()
 
     context = {
         'title' : 'Deliberasaun CAFI',
-        'obj' : obj,
+        'obj' : objs,
         'del_month' : del_month,
     }
     return render(request, 'deliberasaun.html', context)

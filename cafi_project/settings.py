@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-mb4y)#gdhkc-1&gz@w^*@3$nysra35=e*u8_yz!6v%e^n0yb-l
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -85,8 +86,12 @@ WSGI_APPLICATION = 'cafi_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'cafi_project',
+        # 'USER': 'root',
+        # 'PASSWORD': 'g0m3sPa$$w0rd',
+        # 'HOST': 'localhost',
+        # 'PORT': '3307',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cafi_project',
         'USER': 'root',
@@ -128,6 +133,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200
+FILE_UPLOAD_MAX_MEMORY_SIZE = 209715200
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
