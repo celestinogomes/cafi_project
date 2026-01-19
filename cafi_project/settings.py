@@ -86,18 +86,18 @@ WSGI_APPLICATION = 'cafi_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'cafi_project',
-        # 'USER': 'root',
-        # 'PASSWORD': 'g0m3sPa$$w0rd',
-        # 'HOST': 'localhost',
-        # 'PORT': '3307',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cafi_project',
         'USER': 'root',
-        'PASSWORD': 'Mp$$P4ssw0rd',
+        'PASSWORD': 'P4s5w0rd_123',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '3307',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'cafi_project',
+        # 'USER': 'root',
+        # 'PASSWORD': 'Mp$$P4ssw0rd',
+        # 'HOST': 'localhost',
+        # 'PORT': '3306',
 
     }
 }
